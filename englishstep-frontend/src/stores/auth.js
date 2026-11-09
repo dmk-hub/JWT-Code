@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { api, hooks, session } from '../api'
+import { api, hooks, session, socialAuth } from '../api'
 import { decodeJwt } from '../api/jwt-crypto.js'
 import { getDeviceId, setDeviceId } from '../api/device.js'
 
@@ -73,13 +73,37 @@ export const useAuthStore = defineStore('auth', {
         this.user = r.user ?? {}
         this.updateTokenState()
       } catch {
-        this.user = null
-        this.token = null
-        this.refreshToken = null
-        this.decoded = null
+        // Chưa có token của app: thử đổi cookie đăng nhập Google/Facebook (đã được server xác minh) lấy token
+        if (!(await this.restoreFromSocial())) {
+          this.user = null
+          this.token = null
+          this.refreshToken = null
+          this.decoded = null
+        }
       } finally {
         this.ready = true
       }
+    },
+
+    async restoreFromSocial() {
+      if (!socialAuth.enabled) return false
+      try {
+        const { user: u } = await socialAuth.session()
+        // Facebook có thể không trả email: dùng định danh nội bộ thay thế
+        const email = u.email || `${u.id.replace(':', '_')}@${u.provider}.oauth`
+        const login = u.provider === 'facebook' ? api.loginFacebook : api.loginGoogle
+        const r = await login(email, u.name)
+        this.user = r.user ?? {}
+        this.updateTokenState()
+        return true
+      } catch {
+        return false
+      }
+    },
+
+    // Chuyển sang Vercel Function; Google/Facebook xử lý xong sẽ quay lại trang `next`
+    startSocialLogin(provider, next = '/practice') {
+      window.location.assign(`/api/auth/${provider}/login?next=${encodeURIComponent(next)}`)
     },
 
     async login(email, password) {
@@ -196,6 +220,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         await api.logout()
       } catch {}
+      if (socialAuth.enabled) await socialAuth.logout().catch(() => {})
       this.user = null
       this.token = null
       this.refreshToken = null
@@ -209,6 +234,7 @@ export const useAuthStore = defineStore('auth', {
       try {
         await api.logoutAll()
       } catch {}
+      if (socialAuth.enabled) await socialAuth.logout().catch(() => {})
       this.user = null
       this.token = null
       this.refreshToken = null

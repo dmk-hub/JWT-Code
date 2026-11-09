@@ -2,6 +2,7 @@
 import { ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import { socialAuth } from '../api'
 
 const auth = useAuthStore()
 const route = useRoute()
@@ -16,7 +17,10 @@ const email = ref('')
 const password = ref('')
 const confirmPassword = ref('')
 const mfaCode = ref('')
-const formError = ref('')
+const formError = ref(
+  route.query.error === 'config' ? 'Social sign-in is not configured yet.'
+    : route.query.error ? 'Social sign-in failed. Please try again.' : ''
+)
 
 // Social Auth Modal State
 const socialModal = ref(null) // 'google' | 'facebook' | null
@@ -75,6 +79,7 @@ async function handleVerify2Fa() {
 
 function openSocialModal(provider) {
   formError.value = ''
+  if (socialAuth.enabled) return auth.startSocialLogin(provider, String(route.query.next || '/practice'))
   socialModal.value = provider
   if (provider === 'google') {
     socialEmail.value = 'sarah.connor@gmail.com'

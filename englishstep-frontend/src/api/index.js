@@ -20,6 +20,24 @@ export const session = {
 
 export const hooks = { onSessionRevoked: null }
 
+// Đăng nhập Google/Facebook thật qua Vercel Functions (/api/auth/...). Cookie phiên là httpOnly,
+// do server ký; không đi qua mock. Chỉ bật khi build với VITE_AUTH_MODE=oauth.
+async function socialCall(method, path) {
+  let res
+  try {
+    res = await fetch(`/api/auth/${path}`, { method, credentials: 'include' })
+  } catch {
+    throw new NetworkError()
+  }
+  if (!res.ok) throw new ApiError('SOCIAL_SESSION_NONE', res.status)
+  return res.json()
+}
+export const socialAuth = {
+  enabled: env.VITE_AUTH_MODE === 'oauth',
+  session: () => socialCall('GET', 'session'), // { user: { id, email, name, picture, provider } }
+  logout: () => socialCall('POST', 'logout')
+}
+
 function headersFor(path) {
   const h = {}
   if (session.token) {
