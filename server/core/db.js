@@ -1,14 +1,19 @@
-import { PrismaClient } from '@prisma/client'
+// 1. Import từ thư mục generated (không phải @prisma/client)
+import { PrismaClient } from '../../generated/prisma/client.js' 
 import { PrismaPg } from '@prisma/adapter-pg'
+import pg from 'pg'
 
 const globalForPrisma = globalThis
 
-// Tạo adapter với link Database Cloud của bạn
-const adapter = new PrismaPg({
-  connectionString: process.env.DATABASE_URL,
+// 2. Tạo pool kết nối bằng thư viện pg
+const pool = new pg.Pool({ 
+  connectionString: process.env.DATABASE_URL_POOLED || process.env.DATABASE_URL 
 })
 
-// Truyền adapter vào khi khởi tạo PrismaClient
+// 3. Tạo adapter từ pool
+const adapter = new PrismaPg(pool)
+
+// 4. Khởi tạo PrismaClient với adapter
 export const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter })
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
