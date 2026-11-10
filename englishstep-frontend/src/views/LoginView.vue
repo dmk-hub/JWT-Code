@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import { socialAuth } from '../api'
@@ -7,6 +7,18 @@ import { socialAuth } from '../api'
 const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
+
+// BẮT ĐẦU PHẦN THÊM VÀO 
+// Xử lý Token trả về từ Google/Facebook
+onMounted(() => {
+  const token = route.query.token;
+  if (token) {
+    localStorage.setItem('token', token);
+    // Xóa token khỏi URL và chuyển hướng vào trong app
+    router.replace({ path: '/practice' }); 
+  }
+});
+//  KẾT THÚC PHẦN THÊM VÀO 
 
 // View mode: 'signin' | 'signup'
 const mode = ref('signin')
