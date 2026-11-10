@@ -1,10 +1,10 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../stores/auth' // 1. Import Auth Store
+import { useAuthStore } from '../stores/auth'
 
 const router = useRouter()
-const auth = useAuthStore() // 2. Khởi tạo Auth Store
+const auth = useAuthStore()
 const brand = 'EnglishStep'
 
 const topLinks = [
@@ -67,16 +67,11 @@ const close = () => {
 const handleNavigate = (path, action) => {
   close()
   
-  // 3. SỬA LẠI LOGIC LOG OUT
   if (action === 'logout') {
-    // Gọi hàm logout của Pinia Store (nếu có)
-    if (typeof auth.logout === 'function') {
-      auth.logout()
-    }
-    // Xóa token dự phòng
-    localStorage.removeItem('token')
-    
-    // Dùng window.location.href để tải lại toàn bộ trang, tránh bị Router chặn
+    if (typeof auth.logout === 'function') auth.logout()
+    localStorage.clear()
+    sessionStorage.clear()
+    // Ép tải lại trang để xóa sạch state
     window.location.href = '/login'
   } else if (path && path !== '#') {
     router.push(path)
@@ -162,34 +157,44 @@ onBeforeUnmount(() => {
 
       <!-- Tools (Right Side) -->
       <div class="flex items-center gap-4 ml-auto md:ml-0">
-        <!-- Notifications -->
-        <div class="relative">
-          <button @click.stop="toggle('bell')" class="relative p-1.5 text-2xl hover:bg-white/10 rounded-lg">
-            🔔
-            <span class="absolute -top-1 -right-1 min-w-[20px] h-5 rounded-full bg-[#3f5fd9] text-white text-[12px] font-bold grid place-items-center">{{ notifications.length }}</span>
-          </button>
-          <div v-show="openKey === 'bell'" class="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-[#1f2330] border border-[#2f3447] rounded-xl p-2 shadow-2xl z-50">
-            <a v-for="n in notifications" :key="n.text" href="#" class="flex flex-col gap-0.5 p-2.5 rounded-lg hover:bg-white/5">
-              <strong class="text-[14px]">{{ n.text }}</strong>
-              <small class="text-[#9aa1b8] text-[12px]">{{ n.time }}</small>
-            </a>
-          </div>
-        </div>
+        
+        <!-- NÚT LOG IN (Hiện khi CHƯA đăng nhập) -->
+        <a v-if="!auth.loggedIn" @click.prevent="handleNavigate('/login')" class="px-5 py-2 bg-[#3ddc97] text-[#0b2e22] font-bold text-sm rounded-full hover:brightness-110 transition cursor-pointer">
+          Log In
+        </a>
 
-        <!-- Avatar -->
-        <div class="relative">
-          <button @click.stop="toggle('user')" class="w-10 h-10 rounded-full bg-[#3f5fd9] text-white font-extrabold text-[18px] grid place-items-center hover:brightness-110 transition">
-            J
-          </button>
-          <div v-show="openKey === 'user'" class="absolute right-0 top-[calc(100%+8px)] w-[180px] bg-[#1f2330] border border-[#2f3447] rounded-xl p-2 shadow-2xl z-50">
-            <a
-              v-for="u in userMenu"
-              :key="u.label"
-              @click.prevent="handleNavigate(u.path, u.action)"
-              class="block p-2.5 rounded-lg text-[15px] font-bold cursor-pointer hover:bg-white/5"
-            >{{ u.label }}</a>
+        <!-- KHU VỰC DÀNH CHO NGƯỜI DÙNG ĐÃ ĐĂNG NHẬP -->
+        <template v-if="auth.loggedIn">
+          <!-- Notifications -->
+          <div class="relative">
+            <button @click.stop="toggle('bell')" class="relative p-1.5 text-2xl hover:bg-white/10 rounded-lg">
+              🔔
+              <span class="absolute -top-1 -right-1 min-w-[20px] h-5 rounded-full bg-[#3f5fd9] text-white text-[12px] font-bold grid place-items-center">{{ notifications.length }}</span>
+            </button>
+            <div v-show="openKey === 'bell'" class="absolute right-0 top-[calc(100%+8px)] w-[280px] bg-[#1f2330] border border-[#2f3447] rounded-xl p-2 shadow-2xl z-50">
+              <a v-for="n in notifications" :key="n.text" href="#" class="flex flex-col gap-0.5 p-2.5 rounded-lg hover:bg-white/5">
+                <strong class="text-[14px]">{{ n.text }}</strong>
+                <small class="text-[#9aa1b8] text-[12px]">{{ n.time }}</small>
+              </a>
+            </div>
           </div>
-        </div>
+
+          <!-- Avatar -->
+          <div class="relative">
+            <button @click.stop="toggle('user')" class="w-10 h-10 rounded-full bg-[#3f5fd9] text-white font-extrabold text-[18px] grid place-items-center hover:brightness-110 transition">
+              J
+            </button>
+            <div v-show="openKey === 'user'" class="absolute right-0 top-[calc(100%+8px)] w-[180px] bg-[#1f2330] border border-[#2f3447] rounded-xl p-2 shadow-2xl z-50">
+              <a
+                v-for="u in userMenu"
+                :key="u.label"
+                @click.prevent="handleNavigate(u.path, u.action)"
+                class="block p-2.5 rounded-lg text-[15px] font-bold cursor-pointer hover:bg-white/5"
+              >{{ u.label }}</a>
+            </div>
+          </div>
+        </template>
+
       </div>
     </nav>
   </div>
