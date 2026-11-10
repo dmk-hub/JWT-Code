@@ -52,3 +52,6 @@ Thumbs.db
 # ==========================================
 *.zip
 englishstep-frontend.zip
+/generated/prisma
+.vercel
+.env*

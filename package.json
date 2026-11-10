@@ -2,10 +2,16 @@
   "devDependencies": {
     "autoprefixer": "^10.6.2",
     "postcss": "^8.5.32",
-    "tailwindcss": "^4.3.5"
+    "prisma": "^7.10.1",
+    "tailwindcss": "^4.3.5",
+    "tsx": "^4.23.15"
   },
   "dependencies": {
+    "@prisma/client": "^7.10.1",
     "@tailwindcss/vite": "^4.3.5",
+    "bcryptjs": "^3.0.3",
+    "dotenv": "^18.0.10",
+    "jsonwebtoken": "^9.0.3",
     "resend": "^6.37.0"
   }
 }
