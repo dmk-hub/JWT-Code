@@ -30,7 +30,6 @@ export const useAuthStore = defineStore('auth', {
     deviceId: getDeviceId(),
     auditLogs: [],
     previousRotatedRt: null,
-    // 2FA Challenge State
     mfaRequired: false,
     mfaToken: null,
     tempCodeHint: null
@@ -69,19 +68,42 @@ export const useAuthStore = defineStore('auth', {
 
     async restore() {
       try {
-        const r = await api.restore()
-        this.user = r.user ?? {}
-        this.updateTokenState()
+        // 1. KIỂM TRA TOKEN TRÊN URL (Khi Google/Facebook trả về)
+        const urlParams = new URLSearchParams(window.location.search);
+        const tokenFromUrl = urlParams.get('token');
+        
+        if (tokenFromUrl) {
+          localStorage.setItem('token', tokenFromUrl);
+          session.token = tokenFromUrl;
+          this.user = { email: 'oauth-user' }; // Gán tạm user để loggedIn = true
+          this.updateTokenState();
+          // Xóa token khỏi URL cho sạch
+          window.history.replaceState({}, document.title, window.location.pathname);
+          return; 
+        }
+
+        // 2. KIỂM TRA TOKEN TRONG LOCALSTORAGE (Khi F5 tải lại trang)
+        const savedToken = localStorage.getItem('token');
+        if (savedToken) {
+          session.token = savedToken;
+          this.user = { email: 'oauth-user' }; 
+          this.updateTokenState();
+        }
+
+        // 3. Gọi API khôi phục
+        const r = await api.restore();
+        this.user = r.user ?? {};
+        this.updateTokenState();
       } catch {
-        // Chưa có token của app: thử đổi cookie đăng nhập Google/Facebook (đã được server xác minh) lấy token
+        // Chưa có token của app: thử đổi cookie đăng nhập Google/Facebook
         if (!(await this.restoreFromSocial())) {
-          this.user = null
-          this.token = null
-          this.refreshToken = null
-          this.decoded = null
+          this.user = null;
+          this.token = null;
+          this.refreshToken = null;
+          this.decoded = null;
         }
       } finally {
-        this.ready = true
+        this.ready = true;
       }
     },
 
@@ -89,7 +111,6 @@ export const useAuthStore = defineStore('auth', {
       if (!socialAuth.enabled) return false
       try {
         const { user: u } = await socialAuth.session()
-        // Facebook có thể không trả email: dùng định danh nội bộ thay thế
         const email = u.email || `${u.id.replace(':', '_')}@${u.provider}.oauth`
         const login = u.provider === 'facebook' ? api.loginFacebook : api.loginGoogle
         const r = await login(email, u.name)
@@ -101,7 +122,6 @@ export const useAuthStore = defineStore('auth', {
       }
     },
 
-    // Chuyển sang Vercel Function; Google/Facebook xử lý xong sẽ quay lại trang `next`
     startSocialLogin(provider, next = '/practice') {
       window.location.assign(`/api/auth/${provider}/login?next=${encodeURIComponent(next)}`)
     },
@@ -217,10 +237,12 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logout() {
-      try {
-        await api.logout()
-      } catch {}
+      try { await api.logout() } catch {}
       if (socialAuth.enabled) await socialAuth.logout().catch(() => {})
+      
+      // Xóa sạch token
+      localStorage.removeItem('token');
+      
       this.user = null
       this.token = null
       this.refreshToken = null
@@ -231,9 +253,7 @@ export const useAuthStore = defineStore('auth', {
     },
 
     async logoutAll() {
-      try {
-        await api.logoutAll()
-      } catch {}
+      try { await api.logoutAll() } catch {}
       if (socialAuth.enabled) await socialAuth.logout().catch(() => {})
       this.user = null
       this.token = null
@@ -244,7 +264,6 @@ export const useAuthStore = defineStore('auth', {
       this.mfaToken = null
     },
 
-    // Refresh manually for testing rotation (TC-05)
     async manualRefresh() {
       this.busy = true
       this.error = ''

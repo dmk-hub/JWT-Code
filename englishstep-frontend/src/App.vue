@@ -13,7 +13,12 @@ const route = useRoute()
 const router = useRouter()
 
 auth.init()
-onMounted(() => learn.init())
+
+onMounted(() => {
+  // Khôi phục token ngay khi tải trang (bắt token từ URL Google/Facebook)
+  if (!auth.ready) auth.restore()
+  learn.init()
+})
 
 // Session expired or revoked -> redirect to /login
 watch(() => auth.loggedIn, (ok) => {
