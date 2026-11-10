@@ -128,7 +128,7 @@ async function handleForgotPassword() {
   forgotMessage.value = '';
   
   try {
-    // Gọi đến API mà chúng ta sẽ tạo ở backend
+    // Gọi đến API backend
     const res = await fetch('/api/forgot-password', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -137,12 +137,12 @@ async function handleForgotPassword() {
     const data = await res.json();
     
     if (res.ok) {
-      forgotMessage.value = 'Đã gửi email! Hãy kiểm tra hộp thư của bạn.';
+      forgotMessage.value = 'Email sent! Please check your inbox.';
     } else {
-      forgotMessage.value = data.error || 'Có lỗi xảy ra, vui lòng thử lại.';
+      forgotMessage.value = data.error || 'An error occurred, please try again.';
     }
   } catch (error) {
-    forgotMessage.value = 'Lỗi kết nối đến server.';
+    forgotMessage.value = 'Server connection error.';
   } finally {
     isSending.value = false;
   }
@@ -203,17 +203,33 @@ async function handleForgotPassword() {
     <!-- Forgot Password Modal -->
     <div v-if="showForgotModal" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4" @click.self="showForgotModal = false">
       <div class="bg-[#222] border-4 border-[#444] rounded-3xl p-8 max-w-sm w-full shadow-2xl relative">
-        <h2 class="text-white text-2xl font-bold mb-4 text-center">Khôi phục mật khẩu</h2>
-        <p class="text-gray-400 text-sm mb-4 text-center">Nhập email của bạn, chúng tôi sẽ gửi link đặt lại mật khẩu.</p>
+        <h2 class="text-white text-2xl font-bold mb-4 text-center">Reset Password</h2>
+        <p class="text-gray-400 text-sm mb-4 text-center">Enter your email and we'll send you a reset link.</p>
         
         <input v-model="forgotEmail" type="email" placeholder="name@example.com" class="w-full bg-[#1a1a1a] border-2 border-[#555] rounded-xl p-3 text-white mb-4 focus:border-blue-500 outline-none" />
         
-        <p v-if="forgotMessage" class="text-green-400 text-sm mb-4 text-center">{{ forgotMessage }}</p>
+        <!-- Thông báo và nút mở Gmail -->
+        <div v-if="forgotMessage" class="mb-4 text-center">
+          <p class="text-green-400 text-sm mb-3">{{ forgotMessage }}</p>
+          
+          <!-- Nút chuyển hướng đến Gmail (Tự động tìm kiếm từ khóa) -->
+          <a 
+            href="https://mail.google.com/mail/u/0/#search/EnglishStep+OR+%22Password+Reset%22" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-500 text-white font-bold rounded-xl shadow-[0_4px_0_#991b1b] active:shadow-none active:translate-y-1 transition-all"
+          >
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 5.457v13.909c0 .904-.732 1.636-1.636 1.636h-3.819V11.73L12 16.64l-6.545-4.91v9.273H1.636A1.636 1.636 0 0 1 0 19.366V5.457c0-2.023 2.309-3.178 3.927-1.964L5.455 4.64 12 9.548l6.545-4.91 1.528-1.145C21.69 2.28 24 3.434 24 5.457z"/>
+            </svg>
+            Open Gmail
+          </a>
+        </div>
         
-        <div class="flex gap-3 justify-end">
-          <button @click="showForgotModal = false" class="px-4 py-2 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600">Hủy</button>
+        <div class="flex gap-3 justify-end mt-4">
+          <button @click="showForgotModal = false" class="px-4 py-2 bg-gray-700 text-white rounded-xl font-bold hover:bg-gray-600">Cancel</button>
           <button @click="handleForgotPassword" class="px-4 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-500 shadow-[0_4px_0_#1e3a8a] active:translate-y-1 active:shadow-none transition-all" :disabled="isSending">
-            {{ isSending ? 'Đang gửi...' : 'Gửi link' }}
+            {{ isSending ? 'Sending...' : 'Send Link' }}
           </button>
         </div>
       </div>
@@ -221,7 +237,6 @@ async function handleForgotPassword() {
 
     <!-- 2FA Verification Mode -->
     <section v-if="auth.mfaRequired" class="bg-black/40 backdrop-blur-md border-4 border-white/20 rounded-3xl p-8 max-w-md w-full shadow-2xl relative z-10">
-      <!-- ... (Giữ nguyên phần 2FA như cũ) ... -->
       <div class="text-center mb-6">
         <div class="text-5xl mb-2">🛡️</div>
         <h1 class="text-white text-2xl font-bold">Two-Factor Auth</h1>
