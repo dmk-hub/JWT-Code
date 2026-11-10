@@ -8,8 +8,6 @@ const auth = useAuthStore()
 const route = useRoute()
 const router = useRouter()
 
-const brand = 'EnglishStep'
-
 // --- 1. XỬ LÝ TOKEN TỪ OAUTH ---
 onMounted(() => {
   const token = route.query.token;
@@ -134,15 +132,8 @@ async function handleForgotPassword() {
 </script>
 
 <template>
+  <!-- Đã xóa thẻ header thừa ở đây -->
   <div class="min-h-screen bg-[#171a23] text-[#e8eaf2] font-sans flex flex-col">
-    <!-- Header nhỏ -->
-    <header class="px-6 py-4 border-b border-[#2f3447] flex justify-between items-center">
-      <a class="flex items-center gap-2.5 text-[22px] font-extrabold cursor-pointer" @click="router.push('/')">
-        <span class="w-7 h-6.5 rounded-[9px_9px_9px_3px] bg-gradient-to-b from-[#e8eaf2] via-[#e8eaf2] to-[#8fb0ff] block"></span>
-        <span>{{ brand }}</span>
-      </a>
-    </header>
-
     <main class="flex-1 flex justify-center py-12 px-4 relative">
       
       <!-- 2FA SECTION -->

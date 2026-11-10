@@ -1,8 +1,10 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../stores/auth' // 1. Import Auth Store
 
 const router = useRouter()
+const auth = useAuthStore() // 2. Khởi tạo Auth Store
 const brand = 'EnglishStep'
 
 const topLinks = [
@@ -64,9 +66,18 @@ const close = () => {
 
 const handleNavigate = (path, action) => {
   close()
+  
+  // 3. SỬA LẠI LOGIC LOG OUT
   if (action === 'logout') {
+    // Gọi hàm logout của Pinia Store (nếu có)
+    if (typeof auth.logout === 'function') {
+      auth.logout()
+    }
+    // Xóa token dự phòng
     localStorage.removeItem('token')
-    router.push('/login')
+    
+    // Dùng window.location.href để tải lại toàn bộ trang, tránh bị Router chặn
+    window.location.href = '/login'
   } else if (path && path !== '#') {
     router.push(path)
   }
