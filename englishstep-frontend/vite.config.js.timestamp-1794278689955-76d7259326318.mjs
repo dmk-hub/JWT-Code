@@ -1,0 +1,19 @@
+// vite.config.js
+import { defineConfig } from "file:///home/shibuya/Downloads/B2/Group%20Project%20B3/JWT-Code/englishstep-frontend/node_modules/vite/dist/node/index.js";
+import vue from "file:///home/shibuya/Downloads/B2/Group%20Project%20B3/JWT-Code/englishstep-frontend/node_modules/@vitejs/plugin-vue/dist/index.mjs";
+import tailwindcss from "file:///home/shibuya/Downloads/B2/Group%20Project%20B3/JWT-Code/node_modules/@tailwindcss/vite/dist/index.mjs";
+var vite_config_default = defineConfig({
+  plugins: [
+    vue(),
+    tailwindcss()
+    // 2. Kích hoạt plugin Tailwind
+  ],
+  // Khi nối backend thật: proxy /api sang Spring Boot / Node.js
+  server: {
+    proxy: { "/api": { target: "http://localhost:8080", changeOrigin: true } }
+  }
+});
+export {
+  vite_config_default as default
+};
+//# sourceMappingURL=data:application/json;base64,ewogICJ2ZXJzaW9uIjogMywKICAic291cmNlcyI6IFsidml0ZS5jb25maWcuanMiXSwKICAic291cmNlc0NvbnRlbnQiOiBbImNvbnN0IF9fdml0ZV9pbmplY3RlZF9vcmlnaW5hbF9kaXJuYW1lID0gXCIvaG9tZS9zaGlidXlhL0Rvd25sb2Fkcy9CMi9Hcm91cCBQcm9qZWN0IEIzL0pXVC1Db2RlL2VuZ2xpc2hzdGVwLWZyb250ZW5kXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ZpbGVuYW1lID0gXCIvaG9tZS9zaGlidXlhL0Rvd25sb2Fkcy9CMi9Hcm91cCBQcm9qZWN0IEIzL0pXVC1Db2RlL2VuZ2xpc2hzdGVwLWZyb250ZW5kL3ZpdGUuY29uZmlnLmpzXCI7Y29uc3QgX192aXRlX2luamVjdGVkX29yaWdpbmFsX2ltcG9ydF9tZXRhX3VybCA9IFwiZmlsZTovLy9ob21lL3NoaWJ1eWEvRG93bmxvYWRzL0IyL0dyb3VwJTIwUHJvamVjdCUyMEIzL0pXVC1Db2RlL2VuZ2xpc2hzdGVwLWZyb250ZW5kL3ZpdGUuY29uZmlnLmpzXCI7aW1wb3J0IHsgZGVmaW5lQ29uZmlnIH0gZnJvbSAndml0ZSdcbmltcG9ydCB2dWUgZnJvbSAnQHZpdGVqcy9wbHVnaW4tdnVlJ1xuaW1wb3J0IHRhaWx3aW5kY3NzIGZyb20gJ0B0YWlsd2luZGNzcy92aXRlJyAvLyAxLiBJbXBvcnQgcGx1Z2luIFRhaWx3aW5kXG5cbmV4cG9ydCBkZWZhdWx0IGRlZmluZUNvbmZpZyh7XG4gIHBsdWdpbnM6IFtcbiAgICB2dWUoKSxcbiAgICB0YWlsd2luZGNzcygpLCAvLyAyLiBLXHUwMEVEY2ggaG9cdTFFQTF0IHBsdWdpbiBUYWlsd2luZFxuICBdLFxuICAvLyBLaGkgblx1MUVEMWkgYmFja2VuZCB0aFx1MUVBRHQ6IHByb3h5IC9hcGkgc2FuZyBTcHJpbmcgQm9vdCAvIE5vZGUuanNcbiAgc2VydmVyOiB7IFxuICAgIHByb3h5OiB7ICcvYXBpJzogeyB0YXJnZXQ6ICdodHRwOi8vbG9jYWxob3N0OjgwODAnLCBjaGFuZ2VPcmlnaW46IHRydWUgfSB9IFxuICB9XG59KSJdLAogICJtYXBwaW5ncyI6ICI7QUFBaVosU0FBUyxvQkFBb0I7QUFDOWEsT0FBTyxTQUFTO0FBQ2hCLE9BQU8saUJBQWlCO0FBRXhCLElBQU8sc0JBQVEsYUFBYTtBQUFBLEVBQzFCLFNBQVM7QUFBQSxJQUNQLElBQUk7QUFBQSxJQUNKLFlBQVk7QUFBQTtBQUFBLEVBQ2Q7QUFBQTtBQUFBLEVBRUEsUUFBUTtBQUFBLElBQ04sT0FBTyxFQUFFLFFBQVEsRUFBRSxRQUFRLHlCQUF5QixjQUFjLEtBQUssRUFBRTtBQUFBLEVBQzNFO0FBQ0YsQ0FBQzsiLAogICJuYW1lcyI6IFtdCn0K
