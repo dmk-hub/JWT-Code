@@ -1,8 +1,11 @@
 <script setup>
 import { computed, onMounted, watch } from 'vue'
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterView, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from './stores/auth'
 import { useLearningStore } from './stores/learning'
+
+// 1. Import thanh điều hướng NavBar
+import NavBar from './components/NavBar.vue' 
 
 const auth = useAuthStore()
 const learn = useLearningStore()
@@ -14,7 +17,10 @@ onMounted(() => learn.init())
 
 // Session expired or revoked -> redirect to /login
 watch(() => auth.loggedIn, (ok) => {
-  if (!ok && route.path !== '/login') router.push({ path: '/login', query: { next: route.fullPath } })
+  const publicPages = ['/', '/login'];
+  if (!ok && !publicPages.includes(route.path)) {
+    router.push({ path: '/login', query: { next: route.fullPath } })
+  }
   if (ok) learn.flushQueue()
 })
 
@@ -29,42 +35,20 @@ const banner = computed(() => {
 </script>
 
 <template>
-  <!-- Thanh Header phong cách Game -->
-  <header class="bg-[#1a1a1a] border-b-4 border-[#333] px-6 py-4 flex flex-wrap items-center justify-between text-white font-sans shadow-lg relative z-50">
-    <span class="text-2xl font-black text-pink-400 tracking-wide" style="text-shadow: 2px 2px 0px #000;">
-      EnglishStep
-    </span>
-    
-    <nav v-if="auth.loggedIn" aria-label="Main Navigation" class="flex items-center gap-4 text-sm font-bold mt-2 sm:mt-0">
-      <RouterLink to="/practice" class="hover:text-yellow-400 transition-colors">Practice</RouterLink>
-      <RouterLink to="/profile" class="hover:text-yellow-400 transition-colors">Profile</RouterLink>
-      <RouterLink to="/payment" class="hover:text-yellow-400 transition-colors">Plans</RouterLink>
-      
-      <RouterLink to="/jwt-console" class="bg-indigo-900 text-indigo-200 px-3 py-1 rounded-lg border border-indigo-700 hover:bg-indigo-800 transition-all">
-        🛡 JWT
-      </RouterLink>
-
-      <button
-        type="button"
-        class="bg-red-900/50 text-red-300 border border-red-700 px-3 py-1 rounded-lg hover:bg-red-800 hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-        :disabled="learn.queue.length > 0"
-        :title="learn.queue.length ? 'Please sync pending items before signing out' : ''"
-        @click="auth.logout()"
-      >Sign Out</button>
-    </nav>
-  </header>
+  <!-- 2. Gọi thanh NavBar ở đây -->
+  <NavBar />
 
   <!-- Banner thông báo (Offline/Sync) -->
-  <p v-if="banner" class="bg-yellow-100 text-yellow-800 text-center py-2 text-sm font-semibold border-b border-yellow-300" role="status">
+  <p v-if="banner" class="bg-yellow-100 text-yellow-800 text-center py-2 text-sm font-semibold border-b border-yellow-300 relative z-40" role="status">
     {{ banner }}
   </p>
 
-  <!-- Nội dung chính -->
-  <main class="bg-[#87CEEB] min-h-screen">
+  <!-- Nội dung chính (Nền tối để đồng bộ) -->
+  <main class="bg-[#171a23] min-h-screen">
     <RouterView />
   </main>
 </template>
 
 <style scoped>
-/* Chúng ta có thể để trống phần style này vì đã dùng Tailwind CSS ở trên */
+/* Không cần CSS ở đây */
 </style>

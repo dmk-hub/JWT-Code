@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
-const brand = 'EnglishUp'
+const brand = 'EnglishStep'
 
 const goals = [
   { label: 'IELTS', color: '#e8453c', icon: 'I' },
@@ -28,7 +28,21 @@ const features = [
     text: 'Read a sentence aloud, see which sounds are incorrect, and practice again right within the same lesson.',
     mock: 'speech',
   },
+  {
+    tag: 'SPEAKING PRACTICE',
+    title: 'Learn for real life',
+    text: 'Get instant feedback that builds lasting confidence. Speaking practice helps you beat speaking anxiety with personalised pronunciation feedback after every sentence you say.',
+    mock: 'path',
+  },
+  {
+    tag: 'SELF-LED LEARNING',
+    title: 'Learn your way',
+    text: 'Whatever your reason for learning English, we’ve got you covered. Pick any goal, from IELTS to everyday conversation, with short, focused lessons. You’re in control.',
+    mock: 'goal',
+  },
 ]
+
+const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 const track = ref(null)
 const scrollGoals = (dir) => {
@@ -114,6 +128,8 @@ function goToLogin() {
           
           <!-- Mock UI -->
           <div class="mock-wrap bg-[#f4f6fb] rounded h-[330px] relative overflow-hidden text-[#1d2340] shadow-inner">
+            
+            <!-- Mock 1: Quiz -->
             <div v-if="f.mock === 'quiz'" class="relative w-full h-full">
               <div class="absolute left-[36px] top-[50px] w-[290px] bg-[#eef4fd] border-[3px] border-[#d7e3f4] rounded-[16px] p-[16px_20px] shadow-lg -rotate-[4deg] z-10">
                 <div class="text-center font-bold mb-3">Notifications</div>
@@ -132,7 +148,9 @@ function goToLogin() {
                 </div>
               </div>
             </div>
-            <div v-else class="relative w-full h-full">
+
+            <!-- Mock 2: Speech -->
+            <div v-else-if="f.mock === 'speech'" class="relative w-full h-full">
               <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[320px] bg-[#f4f6fb] border-[3px] border-[#d7e3f4] rounded-[16px] p-[16px_20px] shadow-lg">
                 <p class="m-0 mb-2 text-[13px] text-[#6b7390] font-semibold">Say it aloud</p>
                 <p class="m-0 mb-[14px] text-[20px] font-semibold">Th<span class="text-[#e8453c] not-italic font-normal">i</span>rty th<span class="text-[#0fae6f] not-italic font-normal">ou</span>sand</p>
@@ -141,6 +159,65 @@ function goToLogin() {
                 </div>
               </div>
             </div>
+
+            <!-- Mock 3: Speaking Path -->
+            <div v-else-if="f.mock === 'path'" class="relative w-full h-full">
+              <div class="absolute left-[5%] top-[22px] w-[56%] bg-[#f4f6fb] border-[3px] border-[#d7e3f4] rounded-[16px] p-[16px_20px] shadow-lg -rotate-[3deg] z-10">
+                <p class="m-0 mb-2 font-bold text-[14px]">A1 Beginner ⌄</p>
+                <div class="relative h-[10px] rounded-md bg-[#dde4f2] mb-[14px]">
+                  <i class="absolute inset-y-0 left-0 w-[32%] rounded-md bg-[#2fc986]"></i>
+                  <span class="absolute left-[32%] -top-[3px] -translate-x-1/2 text-[9px] font-bold text-white bg-[#2fc986] rounded-md px-1">32%</span>
+                </div>
+                <p class="m-0 text-[22px] font-extrabold">Chapter 1</p>
+                <p class="m-0 mt-[2px] mb-3 text-[12px] font-semibold">1/4 lessons completed</p>
+                <ul class="space-y-1">
+                  <li class="flex items-center gap-2.5 py-1 text-[14px] font-bold">
+                    <span class="w-[30px] h-[30px] rounded-full grid place-items-center border-[3px] border-[#2fc986] text-[#0fae6f] text-[12px] flex-none">✓</span>Hello!
+                  </li>
+                  <li class="flex items-center gap-2.5 py-1 text-[14px] font-bold bg-[#e6eefb] rounded-lg pl-1.5 -ml-1.5">
+                    <span class="w-[30px] h-[30px] rounded-full grid place-items-center border-[3px] border-[#c9d3e6] text-[12px] flex-none">2</span>Saying your name
+                  </li>
+                  <li class="flex items-center gap-2.5 py-1 text-[14px] font-bold text-[#8a93ab]">
+                    <span class="w-[30px] h-[30px] rounded-full grid place-items-center border-[3px] border-[#c9d3e6] text-[12px] flex-none">3</span>How’s it going?
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="absolute right-[5%] top-[78px] w-[56%] bg-[#f4f6fb] border-[3px] border-[#2fc986] rounded-[16px] p-[16px_20px] shadow-lg rotate-[2deg] z-20">
+                <p class="m-0 mb-1.5 text-[#0fae6f] font-extrabold text-[12px]">✓ PERFECT!</p>
+                <p class="m-0 mb-2.5 text-[20px] font-extrabold">Where are you from?</p>
+                <div class="flex gap-2 mb-2.5">
+                  <span class="bg-[#3f5fd9] text-white rounded-full px-3 py-1 text-[12px] font-bold">▶ Original</span>
+                  <span class="bg-[#3f5fd9] text-white rounded-full px-3 py-1 text-[12px] font-bold">▶ You</span>
+                </div>
+                <p class="m-0 text-[12px] leading-snug">Great job! Keep practicing. Another way to say it is “What country are you from?”</p>
+              </div>
+            </div>
+
+            <!-- Mock 4: Daily Goal -->
+            <div v-else class="relative w-full h-full">
+              <div class="absolute left-[5%] top-[40px] w-[54%] bg-[#f4f6fb] border-[3px] border-[#d7e3f4] rounded-[16px] p-[16px_20px] shadow-lg -rotate-[2deg] z-10">
+                <p class="m-0 mb-2 text-[13px] text-[#6b7390] font-semibold">True or false?</p>
+                <p class="m-0 mb-[14px] text-[16px] font-semibold">We say “Good morning!” in the morning.</p>
+                <div class="flex gap-2 mt-3">
+                  <span class="flex-1 text-center border-2 border-[#d7e3f4] rounded-xl py-2 font-bold text-[14px]">True</span>
+                  <span class="flex-1 text-center border-2 border-[#d7e3f4] rounded-xl py-2 font-bold text-[14px]">False</span>
+                </div>
+              </div>
+              
+              <div class="absolute right-[4%] top-[18px] w-[48%] bg-[#3f5fd9] border-[3px] border-[#5b78e8] rounded-[16px] p-[16px_20px] shadow-lg text-white text-center rotate-[2deg] z-20">
+                <div class="w-[64px] h-[64px] mx-auto mb-2 rounded-full border-[5px] border-[#9db4ff] grid place-items-center text-[28px] text-[#ffd666]">★</div>
+                <p class="m-0 mb-1.5 text-[20px] font-extrabold">You did it!</p>
+                <p class="m-0 mb-3 text-[11px] leading-snug opacity-90">You just collected 20/20 points and completed your daily goal.</p>
+                <div class="flex justify-between gap-[2px]">
+                  <span v-for="(d, i) in days" :key="d" class="flex flex-col items-center gap-[3px] text-[9px]">
+                    <b class="w-4 h-4 rounded-full grid place-items-center text-[10px] transition-colors" :class="i < 4 ? 'bg-white text-[#3f5fd9]' : 'bg-white/30'">{{ i < 4 ? '✓' : '' }}</b>
+                    {{ d }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- Feature Text -->
