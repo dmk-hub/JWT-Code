@@ -8,6 +8,6 @@ export default defineConfig({
   },
   datasource: {
     // Thay thế dòng env("DATABASE_URL") bằng đường link thật
-    url: "postgresql://postgres:123456@127.0.0.1:5432/postgres?schema=public",
+    url: "postgres://e306e5fd941dab79d9539108e106a07c48065dbd40b508df56066310887eb74e:sk_Db59XET_5ZFxFeOOHqYOQ@pooled.db.prisma.io:5432/postgres?sslmode=require",
   },
 });
