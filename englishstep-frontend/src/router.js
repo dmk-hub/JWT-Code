@@ -18,9 +18,24 @@ const router = createRouter({
   ]
 })
 
-// Hầu hết endpoint cần JWT: chưa có phiên thì khôi phục bằng cookie refresh, không được thì về /login
 router.beforeEach(async (to) => {
   const auth = useAuthStore()
+
+  // 1. KIỂM TRA TOKEN TRÊN URL (Dành cho trường hợp Google/Facebook redirect về)
+  const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromUrl = urlParams.get('token');
+
+  if (tokenFromUrl) {
+    // Lưu token vào localStorage ngay lập tức
+    localStorage.setItem('token', tokenFromUrl);
+    
+    // Nếu đang ở trang login, chuyển thẳng vào trang practice
+    if (to.path === '/login') {
+      return '/practice';
+    }
+  }
+
+  // 2. LOGIC CŨ CỦA BẠN (Giữ nguyên)
   if (!auth.ready) await auth.restore()
   if (!auth.loggedIn && to.path !== '/login') return { path: '/login', query: { next: to.fullPath } }
   if (auth.loggedIn && to.path === '/login') return '/practice'
