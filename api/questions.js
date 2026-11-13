@@ -3,10 +3,9 @@ import { prisma } from '../server/core/db.js'
 export default async function handler(req, res) {
   if (req.method !== 'GET') return res.status(405).end()
 
-  const { courseSlug } = req.query; // Ví dụ: /api/questions?courseSlug=ielts
+  const { courseSlug } = req.query;
 
   try {
-    // Lấy 10 câu hỏi ngẫu nhiên thuộc khóa học
     const questions = await prisma.question.findMany({
       where: {
         lesson: {
@@ -14,7 +13,6 @@ export default async function handler(req, res) {
         }
       },
       take: 10,
-      // Không trả về đáp án đúng để chống gian lận
       select: {
         id: true,
         text: true,
@@ -23,6 +21,7 @@ export default async function handler(req, res) {
         optionC: true,
         optionD: true,
         difficulty: true
+        // Đã xóa correctAns và explanation để bảo mật
       }
     })
 
