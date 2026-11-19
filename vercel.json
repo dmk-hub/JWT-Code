@@ -1,8 +1,12 @@
 {
-  "buildCommand": "cd englishstep-frontend && npm install && npm run build",
-  "outputDirectory": "englishstep-frontend/dist",
+  "buildCommand": "cd frontend && npm install && npm run build",
+  "outputDirectory": "frontend/dist",
   "framework": "vite",
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/backend/api/$1"
+    },
     {
       "source": "/((?!api/).*)",
       "destination": "/index.html"
